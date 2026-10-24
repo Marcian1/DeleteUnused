@@ -474,30 +474,38 @@ async function scanForUnusedElements(
         }
     }
 
-    await Promise.allSettled([
-        safeLoadAll(model.pages),
-        safeLoadAll(model.microflows),
-        safeLoadAll(model.nanoflows),
-        safeLoadAll(model.rules),
-        safeLoadAll(model.snippets),
-        safeLoadAll(model.layouts),
-        safeLoadAll(model.buildingBlocks),
-        safeLoadAll(model.pageTemplates),
-        safeLoadAll(model.documentTemplates),
-        safeLoadAll(model.importMappings),
-        safeLoadAll(model.exportMappings),
-        safeLoadAll(model.dataSets),
-        safeLoadAll(model.menuDocuments),
-        safeLoadAll(model.javaActions),
-        safeLoadAll(model.javaScriptActions),
-        safeLoadAll(model.queues),
-        safeLoadAll(model.dataTransformers),
-        safeLoadAll(model.messageDefinitions),
-        safeLoadAll(model.messageDefinitions2),
-        safeLoadAll(model.consumedRestServices),
-        safeLoadAll(model.consumedODataServices),
-        safeLoadAll(model.importedWebServices),
-    ]);
+    const loadTargets: Array<[string, any]> = [
+        ["pages", model.pages],
+        ["microflows", model.microflows],
+        ["nanoflows", model.nanoflows],
+        ["rules", model.rules],
+        ["snippets", model.snippets],
+        ["layouts", model.layouts],
+        ["buildingBlocks", model.buildingBlocks],
+        ["pageTemplates", model.pageTemplates],
+        ["documentTemplates", model.documentTemplates],
+        ["importMappings", model.importMappings],
+        ["exportMappings", model.exportMappings],
+        ["dataSets", model.dataSets],
+        ["menuDocuments", model.menuDocuments],
+        ["javaActions", model.javaActions],
+        ["javaScriptActions", model.javaScriptActions],
+        ["queues", model.queues],
+        ["dataTransformers", model.dataTransformers],
+        ["messageDefinitions", model.messageDefinitions],
+        ["messageDefinitions2", model.messageDefinitions2],
+        ["consumedRestServices", model.consumedRestServices],
+        ["consumedODataServices", model.consumedODataServices],
+        ["importedWebServices", model.importedWebServices],
+    ];
+
+    for (const [name, accessor] of loadTargets) {
+        try {
+            await safeLoadAll(accessor);
+        } catch (err) {
+            console.warn(`[DeleteUnused] safeLoadAll failed for ${name}:`, err);
+        }
+    }
 
     // 5. Deep scan all loaded units for references to entities, attributes, associations, and documents
     const visited = new WeakSet<object>();
