@@ -569,6 +569,10 @@ async function scanForUnusedElements(
         if (typeof node.form === "string" && node.form) referencedDocNames.add(node.form);
         if (typeof node.snippet === "string" && node.snippet) referencedDocNames.add(node.snippet);
         if (typeof node.layout === "string" && node.layout) referencedDocNames.add(node.layout);
+        if (typeof node.masterLayout === "string" && node.masterLayout) referencedDocNames.add(node.masterLayout);
+        if (node.layoutCall && typeof node.layoutCall.layout === "string" && node.layoutCall.layout) {
+            referencedDocNames.add(node.layoutCall.layout);
+        }
         if (typeof node.enumeration === "string" && node.enumeration) referencedDocNames.add(node.enumeration);
         if (typeof node.constant === "string" && node.constant) referencedDocNames.add(node.constant);
 

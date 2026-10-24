@@ -1,6 +1,6 @@
 import {
   era
-} from "./chunk-WA3LWEMV.js";
+} from "./chunk-BV4KBFLJ.js";
 
 // src/main/index.ts
 var SYSTEM_MODULES = /* @__PURE__ */ new Set([
@@ -408,6 +408,10 @@ async function scanForUnusedElements(studioPro) {
     if (typeof node.form === "string" && node.form) referencedDocNames.add(node.form);
     if (typeof node.snippet === "string" && node.snippet) referencedDocNames.add(node.snippet);
     if (typeof node.layout === "string" && node.layout) referencedDocNames.add(node.layout);
+    if (typeof node.masterLayout === "string" && node.masterLayout) referencedDocNames.add(node.masterLayout);
+    if (node.layoutCall && typeof node.layoutCall.layout === "string" && node.layoutCall.layout) {
+      referencedDocNames.add(node.layoutCall.layout);
+    }
     if (typeof node.enumeration === "string" && node.enumeration) referencedDocNames.add(node.enumeration);
     if (typeof node.constant === "string" && node.constant) referencedDocNames.add(node.constant);
     if (typeof node.javaAction === "string" && node.javaAction) referencedDocNames.add(node.javaAction);
