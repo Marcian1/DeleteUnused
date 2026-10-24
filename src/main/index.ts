@@ -474,6 +474,9 @@ async function scanForUnusedElements(
         }
     }
 
+    // Only load core documents that contain logic, widgets, expressions, and mappings
+    // (We intentionally omit dataTransformers and specialized services from loadAll because
+    // Studio Pro attaches active editor listeners/canvases to them which can throw ObjectDisposedException)
     const loadTargets: Array<[string, any]> = [
         ["pages", model.pages],
         ["microflows", model.microflows],
@@ -488,15 +491,6 @@ async function scanForUnusedElements(
         ["exportMappings", model.exportMappings],
         ["dataSets", model.dataSets],
         ["menuDocuments", model.menuDocuments],
-        ["javaActions", model.javaActions],
-        ["javaScriptActions", model.javaScriptActions],
-        ["queues", model.queues],
-        ["dataTransformers", model.dataTransformers],
-        ["messageDefinitions", model.messageDefinitions],
-        ["messageDefinitions2", model.messageDefinitions2],
-        ["consumedRestServices", model.consumedRestServices],
-        ["consumedODataServices", model.consumedODataServices],
-        ["importedWebServices", model.importedWebServices],
     ];
 
     for (const [name, accessor] of loadTargets) {

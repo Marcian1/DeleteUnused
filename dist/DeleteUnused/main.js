@@ -348,16 +348,7 @@ async function scanForUnusedElements(studioPro) {
     ["importMappings", model.importMappings],
     ["exportMappings", model.exportMappings],
     ["dataSets", model.dataSets],
-    ["menuDocuments", model.menuDocuments],
-    ["javaActions", model.javaActions],
-    ["javaScriptActions", model.javaScriptActions],
-    ["queues", model.queues],
-    ["dataTransformers", model.dataTransformers],
-    ["messageDefinitions", model.messageDefinitions],
-    ["messageDefinitions2", model.messageDefinitions2],
-    ["consumedRestServices", model.consumedRestServices],
-    ["consumedODataServices", model.consumedODataServices],
-    ["importedWebServices", model.importedWebServices]
+    ["menuDocuments", model.menuDocuments]
   ];
   for (const [name, accessor] of loadTargets) {
     try {
