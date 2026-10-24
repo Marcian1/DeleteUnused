@@ -38,12 +38,26 @@ var DOCUMENT_TYPE_LABELS = {
   "DocumentTemplates$DocumentTemplate": "Document Template",
   "Menus$MenuDocument": "Menu Document",
   "Images$ImageCollection": "Image Collection",
+  "CustomIcons$CustomIconCollection": "Icon Collection",
   "JsonStructures$JsonStructure": "JSON Structure",
   "XmlSchemas$XmlSchema": "XML Schema",
   "Mappings$ImportMapping": "Import Mapping",
   "Mappings$ExportMapping": "Export Mapping",
   "ImportMappings$ImportMapping": "Import Mapping",
-  "ExportMappings$ExportMapping": "Export Mapping"
+  "ExportMappings$ExportMapping": "Export Mapping",
+  "JavaActions$JavaAction": "Java Action",
+  "JavaScriptActions$JavaScriptAction": "JavaScript Action",
+  "Queues$Queue": "Task Queue",
+  "DataTransformers$DataTransformer": "Data Transformer",
+  "MLMappings$MLMappingDocument": "ML Model Mapping",
+  "MessageDefinitions$MessageDefinition": "Message Definition",
+  "MessageDefinitions$MessageDefinitionCollection": "Message Definition",
+  "MessageDefinitions$MessageDefinition2": "Message Definition",
+  "Rest$ConsumedRestService": "Consumed REST Service",
+  "Rest$ConsumedODataService": "Consumed OData Service",
+  "WebServices$ImportedWebService": "Consumed Web Service",
+  "DatabaseConnector$DatabaseConnection": "Database Connection",
+  "ExcelDataImporter$Template": "Data Importer"
 };
 var lastScannedItems = /* @__PURE__ */ new Map();
 var component = {
@@ -76,6 +90,23 @@ var component = {
     });
     await studioPro.ui.messagePassing.addMessageHandler(async (messageInfo) => {
       const msg = messageInfo.message;
+      if (msg.type === "openDocument") {
+        try {
+          const cached = lastScannedItems.get(msg.id);
+          const targetDocId = cached?.category !== "Document" && cached?.domainModelId ? cached.domainModelId : msg.id;
+          await studioPro.ui.editors.editDocument({ id: targetDocId });
+          const response = { type: "openDocumentResult", success: true };
+          await studioPro.ui.messagePassing.sendResponse(messageInfo.messageId, response);
+        } catch (err) {
+          console.error("[DeleteUnused] editDocument error:", err);
+          const response = {
+            type: "openDocumentResult",
+            success: false,
+            error: err?.message || String(err)
+          };
+          await studioPro.ui.messagePassing.sendResponse(messageInfo.messageId, response);
+        }
+      }
       if (msg.type === "scan") {
         try {
           const items = await scanForUnusedElements(studioPro);
@@ -175,10 +206,23 @@ async function scanForUnusedElements(studioPro) {
     collectDocUnits(model.documentTemplates),
     collectDocUnits(model.menuDocuments),
     collectDocUnits(model.imageCollections),
+    collectDocUnits(model.customIconCollections),
     collectDocUnits(model.jsonStructures),
     collectDocUnits(model.xmlSchemas),
     collectDocUnits(model.importMappings),
-    collectDocUnits(model.exportMappings)
+    collectDocUnits(model.exportMappings),
+    collectDocUnits(model.javaActions),
+    collectDocUnits(model.javaScriptActions),
+    collectDocUnits(model.queues),
+    collectDocUnits(model.dataTransformers),
+    collectDocUnits(model.mlMappingDocuments),
+    collectDocUnits(model.messageDefinitions),
+    collectDocUnits(model.messageDefinitions2),
+    collectDocUnits(model.consumedRestServices),
+    collectDocUnits(model.consumedODataServices),
+    collectDocUnits(model.importedWebServices),
+    collectDocUnits(model.databaseConnections),
+    collectDocUnits(model.excelDataImporterTemplates)
   ]);
   const candidateEntities = [];
   const candidateAttributes = [];
@@ -305,7 +349,16 @@ async function scanForUnusedElements(studioPro) {
     safeLoadAll(model.importMappings),
     safeLoadAll(model.exportMappings),
     safeLoadAll(model.dataSets),
-    safeLoadAll(model.menuDocuments)
+    safeLoadAll(model.menuDocuments),
+    safeLoadAll(model.javaActions),
+    safeLoadAll(model.javaScriptActions),
+    safeLoadAll(model.queues),
+    safeLoadAll(model.dataTransformers),
+    safeLoadAll(model.messageDefinitions),
+    safeLoadAll(model.messageDefinitions2),
+    safeLoadAll(model.consumedRestServices),
+    safeLoadAll(model.consumedODataServices),
+    safeLoadAll(model.importedWebServices)
   ]);
   const visited = /* @__PURE__ */ new WeakSet();
   function extractFromText(text) {
@@ -357,6 +410,23 @@ async function scanForUnusedElements(studioPro) {
     if (typeof node.layout === "string" && node.layout) referencedDocNames.add(node.layout);
     if (typeof node.enumeration === "string" && node.enumeration) referencedDocNames.add(node.enumeration);
     if (typeof node.constant === "string" && node.constant) referencedDocNames.add(node.constant);
+    if (typeof node.javaAction === "string" && node.javaAction) referencedDocNames.add(node.javaAction);
+    if (typeof node.javaScriptAction === "string" && node.javaScriptAction) referencedDocNames.add(node.javaScriptAction);
+    if (typeof node.queue === "string" && node.queue) referencedDocNames.add(node.queue);
+    if (node.queueSettings && typeof node.queueSettings.queue === "string" && node.queueSettings.queue) {
+      referencedDocNames.add(node.queueSettings.queue);
+    }
+    if (typeof node.importedWebService === "string" && node.importedWebService) referencedDocNames.add(node.importedWebService);
+    if (typeof node.consumedODataService === "string" && node.consumedODataService) referencedDocNames.add(node.consumedODataService);
+    if (typeof node.transformation === "string" && node.transformation) referencedDocNames.add(node.transformation);
+    if (typeof node.mlMappingDocument === "string" && node.mlMappingDocument) referencedDocNames.add(node.mlMappingDocument);
+    if (typeof node.messageDefinition === "string" && node.messageDefinition) referencedDocNames.add(node.messageDefinition);
+    if (typeof node.messageDefinitionCollection === "string" && node.messageDefinitionCollection) {
+      referencedDocNames.add(node.messageDefinitionCollection);
+    }
+    if (typeof node.databaseConnection === "string" && node.databaseConnection) referencedDocNames.add(node.databaseConnection);
+    if (typeof node.templateDocument === "string" && node.templateDocument) referencedDocNames.add(node.templateDocument);
+    if (typeof node.iconCollection === "string" && node.iconCollection) referencedDocNames.add(node.iconCollection);
     if (node.$Type === "DomainModels$DirectEntityRef" && typeof node.entity === "string") {
       referencedEntityNames.add(node.entity);
     }
@@ -500,10 +570,23 @@ async function deleteElements(studioPro, items) {
     model.documentTemplates,
     model.menuDocuments,
     model.imageCollections,
+    model.customIconCollections,
     model.jsonStructures,
     model.xmlSchemas,
     model.importMappings,
-    model.exportMappings
+    model.exportMappings,
+    model.javaActions,
+    model.javaScriptActions,
+    model.queues,
+    model.dataTransformers,
+    model.mlMappingDocuments,
+    model.messageDefinitions,
+    model.messageDefinitions2,
+    model.consumedRestServices,
+    model.consumedODataServices,
+    model.importedWebServices,
+    model.databaseConnections,
+    model.excelDataImporterTemplates
   ];
   for (const item of items) {
     let deleted = false;

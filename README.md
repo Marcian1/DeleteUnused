@@ -9,7 +9,10 @@ A Mendix Studio Pro extension to detect, filter, select, and bulk-delete unused 
   - **Unused Attributes**: Detects entity attributes that are never placed on pages, never manipulated in microflows/nanoflows, never used in expressions/XPath, and not used in validation rules or indexes.
   - **Unused Associations**: Detects 1-to-many, many-to-many, and cross-associations never traversed in pages, forms, or microflows.
 - **Standalone Documents Clean-Up**:
-  - Detects unused Pages, Microflows, Nanoflows, Rules, Snippets, Layouts, Enumerations, Constants, etc.
+  - Detects unused Pages, Microflows, Nanoflows, Rules, Snippets, Layouts, Enumerations, Constants, Regular Expressions, Datasets, Document Templates, Menu Documents, Image Collections, JSON Structures, XML Schemas, Import & Export Mappings.
+  - **Extended Support**: Java Actions, JavaScript Actions, Task Queues, Custom Icon Collections, Data Transformers, ML Model Mappings, Message Definitions, Consumed REST Services, Consumed OData Services, Consumed Web Services, External Database Connections, and Data Importer Templates.
+- **Select & Edit Directly in Studio Pro**:
+  - Click the **✏️ Open / Edit** button beside any element to open its editor directly in Studio Pro.
 - **Safety First**:
   - System modules (`System`, `Administration`, `Atlas_Core`, etc.) and AppStore/marketplace modules are strictly protected from deletion.
   - Confirmation dialog with category-by-category breakdown before any deletion occurs.

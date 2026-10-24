@@ -23904,6 +23904,27 @@ var STYLE = `
     text-decoration: underline;
   }
 
+  .open-doc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .open-doc-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary-border);
+  }
+
   /* \u2500\u2500 Table Area \u2500\u2500 */
   .table-wrap {
     flex: 1;
@@ -24304,6 +24325,28 @@ function DeleteUnusedApp({ studioPro }) {
       setStatusMessage("Delete failed. Check the Studio Pro console for details.");
     }
   }, [studioPro, items, selectedIds]);
+  const handleOpenElement = (0, import_react.useCallback)(async (item, e) => {
+    e.stopPropagation();
+    try {
+      const resp = await new Promise((resolve) => {
+        studioPro.ui.messagePassing.sendMessage(
+          {
+            type: "openDocument",
+            id: item.id
+          },
+          async (r) => {
+            resolve(r);
+          }
+        );
+      });
+      if (resp.type === "openDocumentResult" && !resp.success) {
+        setStatusMessage(`Could not open document: ${resp.error ?? "Unknown error"}`);
+      }
+    } catch (err) {
+      console.error("[DeleteUnused UI] Open document error:", err);
+      setStatusMessage(`Could not open document: ${err?.message || String(err)}`);
+    }
+  }, [studioPro]);
   const modules = (0, import_react.useMemo)(() => {
     const set = /* @__PURE__ */ new Set();
     items.forEach((item) => set.add(item.moduleName));
@@ -24489,7 +24532,7 @@ function DeleteUnusedApp({ studioPro }) {
     },
     "Module ",
     sortKey === "moduleName" && /* @__PURE__ */ import_react.default.createElement("span", { className: "sort-arrow" }, sortDir === "asc" ? "\u25B2" : "\u25BC")
-  ))), /* @__PURE__ */ import_react.default.createElement("tbody", null, sortedItems.map((item) => {
+  ), /* @__PURE__ */ import_react.default.createElement("th", { style: { textAlign: "right" } }, "Action"))), /* @__PURE__ */ import_react.default.createElement("tbody", null, sortedItems.map((item) => {
     const isSelected = selectedIds.has(item.id);
     return /* @__PURE__ */ import_react.default.createElement(
       "tr",
@@ -24511,7 +24554,17 @@ function DeleteUnusedApp({ studioPro }) {
       /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("div", { className: "item-name-cell" }, /* @__PURE__ */ import_react.default.createElement("span", { className: "item-name-text" }, item.name), item.containerName && /* @__PURE__ */ import_react.default.createElement("span", { className: "item-context-text" }, item.containerName))),
       /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("span", { className: `cat-badge ${item.category}` }, item.category)),
       /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("span", { className: "sub-badge" }, item.subType)),
-      /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("span", { className: "module-tag" }, item.moduleName))
+      /* @__PURE__ */ import_react.default.createElement("td", null, /* @__PURE__ */ import_react.default.createElement("span", { className: "module-tag" }, item.moduleName)),
+      /* @__PURE__ */ import_react.default.createElement("td", { style: { textAlign: "right" }, onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react.default.createElement(
+        "button",
+        {
+          className: "open-doc-btn",
+          title: "Open and edit in Studio Pro",
+          onClick: (e) => handleOpenElement(item, e)
+        },
+        /* @__PURE__ */ import_react.default.createElement("span", null, "\u270F\uFE0F"),
+        " Open / Edit"
+      ))
     );
   })))), showDeleteModal && /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-overlay", onClick: () => setShowDeleteModal(false) }, /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-card", onClick: (e) => e.stopPropagation() }, /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-header" }, /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-icon-danger" }, "\u26A0\uFE0F"), /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-title" }, /* @__PURE__ */ import_react.default.createElement("h2", null, "Confirm Deletion"), /* @__PURE__ */ import_react.default.createElement("p", null, "This will permanently remove the selected elements from your Mendix project."))), /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-body" }, /* @__PURE__ */ import_react.default.createElement("p", null, "Are you sure you want to delete the selected ", /* @__PURE__ */ import_react.default.createElement("strong", null, selectedIds.size), " element(s)?"), /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-summary-box" }, selectedBreakdown.Entity > 0 && /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-summary-row" }, /* @__PURE__ */ import_react.default.createElement("span", null, "Domain Model Entities:"), /* @__PURE__ */ import_react.default.createElement("span", null, selectedBreakdown.Entity)), selectedBreakdown.Attribute > 0 && /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-summary-row" }, /* @__PURE__ */ import_react.default.createElement("span", null, "Domain Model Attributes:"), /* @__PURE__ */ import_react.default.createElement("span", null, selectedBreakdown.Attribute)), selectedBreakdown.Association > 0 && /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-summary-row" }, /* @__PURE__ */ import_react.default.createElement("span", null, "Domain Model Associations:"), /* @__PURE__ */ import_react.default.createElement("span", null, selectedBreakdown.Association)), selectedBreakdown.Document > 0 && /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-summary-row" }, /* @__PURE__ */ import_react.default.createElement("span", null, "Standalone Documents:"), /* @__PURE__ */ import_react.default.createElement("span", null, selectedBreakdown.Document)))), /* @__PURE__ */ import_react.default.createElement("div", { className: "modal-footer" }, /* @__PURE__ */ import_react.default.createElement("button", { className: "btn btn-outline", onClick: () => setShowDeleteModal(false) }, "Cancel"), /* @__PURE__ */ import_react.default.createElement("button", { className: "btn btn-danger", onClick: handleDeleteSelected }, "Yes, Delete ", selectedIds.size, " Element(s)")))));
 }

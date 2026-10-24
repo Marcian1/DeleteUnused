@@ -493,7 +493,6 @@ async function scanForUnusedElements(
         safeLoadAll(model.javaScriptActions),
         safeLoadAll(model.queues),
         safeLoadAll(model.dataTransformers),
-        safeLoadAll(model.mlMappingDocuments),
         safeLoadAll(model.messageDefinitions),
         safeLoadAll(model.messageDefinitions2),
         safeLoadAll(model.consumedRestServices),
@@ -895,4 +894,21 @@ async function deleteElements(
         // If not yet deleted, try document deletion APIs
         if (!deleted) {
             for (const api of documentApis) {
- 
+                try {
+                    await api.deleteUnit(item.id);
+                    deleted = true;
+                    deletedCount++;
+                    break;
+                } catch {
+                    // Try next API
+                }
+            }
+        }
+
+        if (!deleted) {
+            errors.push(`Could not delete element ${item.id} (${item.category})`);
+        }
+    }
+
+    return { deletedCount, errors };
+}

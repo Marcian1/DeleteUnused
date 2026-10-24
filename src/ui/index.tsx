@@ -356,6 +356,27 @@ const STYLE = `
     text-decoration: underline;
   }
 
+  .open-doc-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #f1f5f9;
+    color: var(--text-secondary);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-sm);
+    padding: 3px 8px;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+
+  .open-doc-btn:hover {
+    background: var(--primary-light);
+    color: var(--primary);
+    border-color: var(--primary-border);
+  }
+
   /* ── Table Area ── */
   .table-wrap {
     flex: 1;
@@ -775,6 +796,30 @@ function DeleteUnusedApp({ studioPro }: { studioPro: ReturnType<typeof getStudio
         }
     }, [studioPro, items, selectedIds]);
 
+    // ── Open / Edit in Studio Pro ────────────────────────────────────────────
+    const handleOpenElement = useCallback(async (item: UnusedItem, e: React.MouseEvent) => {
+        e.stopPropagation();
+        try {
+            const resp = await new Promise<ExtensionResponse>((resolve) => {
+                studioPro.ui.messagePassing.sendMessage<ExtensionMessage, ExtensionResponse>(
+                    {
+                        type: "openDocument",
+                        id: item.id,
+                    },
+                    async (r: ExtensionResponse) => {
+                        resolve(r);
+                    }
+                );
+            });
+            if (resp.type === "openDocumentResult" && !resp.success) {
+                setStatusMessage(`Could not open document: ${resp.error ?? "Unknown error"}`);
+            }
+        } catch (err: any) {
+            console.error("[DeleteUnused UI] Open document error:", err);
+            setStatusMessage(`Could not open document: ${err?.message || String(err)}`);
+        }
+    }, [studioPro]);
+
     // ── Filtering and Sorting ────────────────────────────────────────────────
     const modules = useMemo(() => {
         const set = new Set<string>();
@@ -1046,6 +1091,7 @@ function DeleteUnusedApp({ studioPro }: { studioPro: ReturnType<typeof getStudio
                                 >
                                     Module {sortKey === "moduleName" && <span className="sort-arrow">{sortDir === "asc" ? "▲" : "▼"}</span>}
                                 </th>
+                                <th style={{ textAlign: "right" }}>Action</th>
                             </tr>
                         </thead>
                         <tbody>
@@ -1082,6 +1128,15 @@ function DeleteUnusedApp({ studioPro }: { studioPro: ReturnType<typeof getStudio
                                         </td>
                                         <td>
                                             <span className="module-tag">{item.moduleName}</span>
+                                        </td>
+                                        <td style={{ textAlign: "right" }} onClick={(e) => e.stopPropagation()}>
+                                            <button
+                                                className="open-doc-btn"
+                                                title="Open and edit in Studio Pro"
+                                                onClick={(e) => handleOpenElement(item, e)}
+                                            >
+                                                <span>✏️</span> Open / Edit
+                                            </button>
                                         </td>
                                     </tr>
                                 );
