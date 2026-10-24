@@ -1,0 +1,14 @@
+{
+  "mendixComponent": {
+    "entryPoints": {
+      "main": "main.js",
+      "ui": {
+        "tab": "tab.js"
+      }
+    },
+    "supportsHeadless": true,
+    "permissions": {
+      "runtime-configuration-private": false
+    }
+  }
+}

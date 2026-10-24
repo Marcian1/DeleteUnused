@@ -1,0 +1,14 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Launch StudioPro with debugger attached",
+            "type": "msedge",
+            "useWebView": true,
+            "runtimeExecutable": "C:\\Program Files\\Mendix\\11.12.4\\modeler",
+            "runtimeArgs": ["C:\\Users\\DELL\\Mendix\\MendixApp\\MendixApp.mpr", "--enable-extension-development", "--enable-web-extensions"],
+            "request": "launch",
+            "webRoot": "${workspaceFolder}/dist/DeleteUnused"
+        }
+    ]
+}

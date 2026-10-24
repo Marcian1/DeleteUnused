@@ -1,0 +1,35 @@
+# Dependencies
+node_modules/
+
+# Build outputs & Packaging
+# dist/
+build/
+*.mpk
+
+# Local Mendix Test Projects (generated during widget scaffolding/testing)
+tests/testProject/
+.testProject/
+
+# Test coverage reports
+coverage/
+
+# TypeScript build info / cache
+*.tsbuildinfo
+
+# Environment configuration files
+.env
+.env.local
+
+# Logs & debugging outputs
+*.log
+npm-debug.log*
+yarn-debug.log*
+pnpm-debug.log*
+
+# IDE & OS-specific files
+.DS_Store
+.vscode/
+.idea/
+*.suo
+*.user
+*.sln

@@ -1,0 +1,24 @@
+{
+  "name": "DeleteUnused",
+  "version": "0.1.0",
+  "type": "module",
+  "description": "Extension for Mendix Studio Pro",
+  "license": "MIT",
+  "scripts": {
+    "build": "tsc --noEmit && node build-extension.mjs",
+    "build:dev": "tsc --noEmit && node build-extension.mjs --watch"
+  },
+  "dependencies": {
+    "@mendix/extensions-api": "^0.11.6-mendix.11.12.6",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1" 
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.10",
+    "@types/react": "^18.3.18",
+    "@types/react-dom": "^18.3.5",
+    "typescript": "^5.8.2",
+    "esbuild": "0.25.5",
+    "minimist": "^1.2.8"
+  }
+}
